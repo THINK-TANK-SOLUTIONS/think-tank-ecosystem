@@ -1,0 +1,117 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #09090b;
+  --color-surface: #121214;
+  --color-elevated: #1a1a1e;
+  --color-fg: #f2f1ec;
+  --color-muted: #9c9c94;
+  --color-subtle: #6e6e68;
+  --color-accent: #c9d4c4;
+  --color-accent-fg: #0c0d0b;
+  --color-border: #26262b;
+  --color-ring: #c9d4c4;
+  --color-danger: #c45c4a;
+
+  --color-sage: #c9d4c4;
+  --color-steel: #b7c4d4;
+  --color-forest: #a8c5b4;
+  --color-moss: #9db89a;
+  --color-clay: #d4b8a8;
+  --color-teal: #a8c4c4;
+  --color-rose: #c4a8a8;
+  --color-slate: #a8b8c4;
+  --color-blush: #c4b0b8;
+  --color-sand: #c4c0b4;
+  --color-mist: #b8c0bc;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+
+  --shadow-border: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-border-hover: 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .shadow-hairline {
+    box-shadow: var(--shadow-border);
+  }
+
+  .shadow-hairline-hover {
+    box-shadow: var(--shadow-border-hover);
+  }
+
+  .hero-wash {
+    background: radial-gradient(
+      ellipse at top,
+      color-mix(in oklab, var(--color-accent) 8%, transparent),
+      transparent 55%
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
