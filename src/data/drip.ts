@@ -122,7 +122,7 @@ export const dripDays: DripDay[] = [
       "Posted to all three channels",
       "Five local comments as a person",
     ],
-    ventureSlug: "yourspace",
+    ventureSlug: "privacy-pod",
   },
   {
     day: 5,
@@ -154,13 +154,13 @@ export const dripDays: DripDay[] = [
   {
     day: 6,
     subject: "Catch the names.",
-    reminder: "Stand up the free CRM. Every name from this week goes in it.",
+    reminder: "Stand up a simple pipeline. Every name from this week goes in it.",
     physical: false,
     minutes: 40,
-    where: "ClientFlow starter (or a single Google Sheet if you have not joined yet)",
+    where: "A single Google Sheet (ClientFlow is waitlist-only while it is in build)",
     body: "A notebook is a start. A list you can follow up from is a business. Put every person you met, every commenter, every email into the pipeline. If it is not in the list, it did not happen.",
     steps: [
-      "Open ClientFlow on the free starter, or a Sheet with columns: Name, Where we met, Phone, Stage, Follow-up date, Notes. Stages are only: New / Talking / Booked / Paid.",
+      "Open a Sheet with columns: Name, Where we met, Phone, Stage, Follow-up date, Notes. Stages are only: New / Talking / Booked / Paid.",
       "Enter every human from days 1–5: the review person, the three shop contacts, anyone who commented, anyone who texted. If you do not have a phone, put the channel they used.",
       "Set a follow-up date on each row. Shop contacts: tomorrow. Reviewer: a week after they post. Commenters: do not follow up unless they asked.",
       "Write one saved reply you will actually send, 3–4 sentences, in the voice you used on day 5. Save it as a note titled “first reply.” You will paste, then personalize the first name and the street.",
@@ -230,7 +230,7 @@ export const dripDays: DripDay[] = [
       "Three neighbor FAQs",
       "Second review asked",
     ],
-    ventureSlug: "terrascape-oasis",
+    ventureSlug: "terraform-oasis",
   },
   {
     day: 9,
@@ -283,7 +283,7 @@ export const dripDays: DripDay[] = [
       "CRM: new / talking / booked / paid",
       "One sentence for next week",
     ],
-    ventureSlug: "terraedutainment",
+    ventureSlug: "terraform-edutainment",
   },
   {
     day: 11,
@@ -298,7 +298,7 @@ export const dripDays: DripDay[] = [
       "Send five CRM follow-ups using the saved reply. Personalize the first name and one detail from your notes. Mark the date you will follow up next. Do not write a new essay per person.",
       "Walk into one new complementary business on the same corridor as day 5. Same script. New first name in the CRM before you leave the curb.",
       "Tell one person the story in two sentences: “I registered, I put the shop on Google, I walked into three businesses, I have a list.” Not a pitch. A fact. Ask them who else should hear it.",
-      "Open the Think Tank venture that matches the bottleneck (SiteForge if you still have no page, ClientFlow if the list is a mess, Solutions if the 30 minutes has no prompts). Join that list only. Then close the laptop.",
+      "Open the Think Tank venture that matches the bottleneck (SiteForge if you still have no page, ClientFlow if the list is a mess, Solutions if you want the system built for you). Join that list only. Then close the laptop.",
     ],
     script:
       "I spent eleven days making this real — name, Google, three shops, a list. I’m live in [neighborhood]. Who do you know that already complains about [problem]?",
