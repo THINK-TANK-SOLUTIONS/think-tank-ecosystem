@@ -19,3 +19,4 @@ AGENTS.project.md
 *.log
 coverage/
 .vite/
+.netlify/
