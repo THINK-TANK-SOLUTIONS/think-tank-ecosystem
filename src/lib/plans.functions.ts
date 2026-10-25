@@ -327,7 +327,10 @@ async function callOpenAICompatible(baseUrl: string, user: string): Promise<stri
       ],
     }),
   });
-  if (!res.ok) throw new Error(`AI API error ${res.status}`);
+  if (!res.ok) {
+    console.error(`AI provider error ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    throw new Error(`AI API error ${res.status}`);
+  }
   return outputText((await res.json()) as Record<string, unknown>);
 }
 
@@ -349,6 +352,7 @@ Search the live web for this ZIP: city name, demographics, income, competing bus
     try {
       return normalizePlan(extractJson(await callOpenAICompatible(baseUrl, user)), zip);
     } catch (err) {
+      console.error("AI provider failed:", err instanceof Error ? err.message : err);
       if (!apiKey) throw err;
     }
   }
