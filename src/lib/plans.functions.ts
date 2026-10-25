@@ -320,9 +320,10 @@ async function callOpenAICompatible(baseUrl: string, user: string): Promise<stri
       model: process.env.AI_MODEL || "openai",
       temperature: 0.4,
       max_tokens: 8000,
+      response_format: { type: "json_object" },
       messages: [
         { role: "system", content: SYSTEM },
-        { role: "user", content: user },
+        { role: "user", content: `${user}\nOutput minified JSON on one line, no indentation.` },
       ],
     }),
   });
