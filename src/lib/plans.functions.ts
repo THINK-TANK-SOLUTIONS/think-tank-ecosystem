@@ -323,7 +323,7 @@ async function callOpenAICompatible(baseUrl: string, user: string): Promise<stri
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: SYSTEM },
-        { role: "user", content: `${user}\nOutput minified JSON on one line, no indentation.` },
+        { role: "user", content: user },
       ],
     }),
   });
