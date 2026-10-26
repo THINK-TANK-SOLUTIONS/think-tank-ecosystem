@@ -20,3 +20,5 @@ AGENTS.project.md
 coverage/
 .vite/
 .netlify/
+.vercel
+.env*
