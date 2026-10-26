@@ -19,7 +19,13 @@ function extractJson(text: string): unknown {
   if (start === -1 || end === -1 || end <= start) {
     throw new Error("The plan came back in an unexpected shape. Try again.");
   }
-  return JSON.parse(raw.slice(start, end + 1));
+  const body = raw.slice(start, end + 1);
+  try {
+    return JSON.parse(body);
+  } catch {
+    // Free models sometimes leave trailing commas; strip them and try once more.
+    return JSON.parse(body.replace(/,(\s*[}\]])/g, "$1"));
+  }
 }
 
 function asString(v: unknown, fallback = ""): string {
@@ -350,7 +356,12 @@ Search the live web for this ZIP: city name, demographics, income, competing bus
 
   if (baseUrl) {
     try {
-      return normalizePlan(extractJson(await callOpenAICompatible(baseUrl, user)), zip);
+      try {
+        return normalizePlan(extractJson(await callOpenAICompatible(baseUrl, user)), zip);
+      } catch (first) {
+        console.error("AI provider attempt 1 failed:", first instanceof Error ? first.message : first);
+        return normalizePlan(extractJson(await callOpenAICompatible(baseUrl, user)), zip);
+      }
     } catch (err) {
       console.error("AI provider failed:", err instanceof Error ? err.message : err);
       if (!apiKey) throw err;
