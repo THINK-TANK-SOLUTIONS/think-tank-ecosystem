@@ -149,7 +149,10 @@ export default defineConfig(({ command, isPreview }) => ({
     ...(command === "build" || isPreview
       ? [
           nitro({
-            preset: "vercel",
+            // Netlify CI sets NETLIFY=true; everything else keeps the Vercel output.
+            preset: process.env.NETLIFY ? "netlify" : "vercel",
+            // Plans take ~20s; Hobby allows up to 60s.
+            vercel: { functions: { maxDuration: 60, runtime: "nodejs22.x" } },
             // Auto-registers server/middleware/* (the PWA install page +
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.

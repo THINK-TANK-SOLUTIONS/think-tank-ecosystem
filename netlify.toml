@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[redirects]]
+  from = "/ventures/yourspace"
+  to = "/ventures/privacy-pod"
+  status = 301
+  force = true
+
+# PGLite loads its wasm/data at runtime by file path; make sure they ship
+# with the SSR function bundle.
+[functions]
+  included_files = [".netlify/functions-internal/server/_libs/*.wasm", ".netlify/functions-internal/server/_libs/*.data"]
