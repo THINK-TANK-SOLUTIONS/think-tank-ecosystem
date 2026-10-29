@@ -479,6 +479,13 @@ export const generatePlan = createServerFn({ method: "POST" })
       ON CONFLICT (user_id) DO UPDATE SET plan_id = EXCLUDED.plan_id
     `;
 
+    try {
+      const { sendDripDay1 } = await import("./drip-email.server");
+      await sendDripDay1(sql, userId);
+    } catch (err) {
+      console.error("[drip] day 1 error:", err instanceof Error ? err.message : err);
+    }
+
     return rowToSaved(row);
   });
 
