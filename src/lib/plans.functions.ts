@@ -19,7 +19,13 @@ function extractJson(text: string): unknown {
   if (start === -1 || end === -1 || end <= start) {
     throw new Error("The plan came back in an unexpected shape. Try again.");
   }
-  return JSON.parse(raw.slice(start, end + 1));
+  const body = raw.slice(start, end + 1);
+  try {
+    return JSON.parse(body);
+  } catch {
+    // Free models sometimes leave trailing commas; strip them and try once more.
+    return JSON.parse(body.replace(/,(\s*[}\]])/g, "$1"));
+  }
 }
 
 function asString(v: unknown, fallback = ""): string {
@@ -310,9 +316,34 @@ Hard rules:
 - brand.colors: 3-4 hex colors, restrained, not purple/gold neon.
 - Keep strings tight. No emoji. No guru language. No "consider" or "you might want to."`;
 
+async function callOpenAICompatible(baseUrl: string, user: string): Promise<string> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (process.env.AI_API_KEY) headers.Authorization = `Bearer ${process.env.AI_API_KEY}`;
+  const res = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model: process.env.AI_MODEL || "openai",
+      temperature: 0.4,
+      max_tokens: 8000,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: SYSTEM },
+        { role: "user", content: user },
+      ],
+    }),
+  });
+  if (!res.ok) {
+    console.error(`AI provider error ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    throw new Error(`AI API error ${res.status}`);
+  }
+  return outputText((await res.json()) as Record<string, unknown>);
+}
+
 async function callFinn(skill: string, zip: string, budget: string): Promise<BusinessPlan> {
   const apiKey = process.env.XAI_API_KEY;
-  if (!apiKey) {
+  const baseUrl = process.env.AI_BASE_URL;
+  if (!apiKey && !baseUrl) {
     throw new Error("AI is not available in this environment.");
   }
 
@@ -322,6 +353,20 @@ ZIP code: ${zip}
 Startup budget: ${budget}
 
 Search the live web for this ZIP: city name, demographics, income, competing businesses in this niche, Facebook groups, chambers, typical local pricing, and the official state filing / licensing URLs. Then produce the JSON. A tired person should be able to execute each step without guessing. Every steps array is click-by-click.`;
+
+  if (baseUrl) {
+    try {
+      try {
+        return normalizePlan(extractJson(await callOpenAICompatible(baseUrl, user)), zip);
+      } catch (first) {
+        console.error("AI provider attempt 1 failed:", first instanceof Error ? first.message : first);
+        return normalizePlan(extractJson(await callOpenAICompatible(baseUrl, user)), zip);
+      }
+    } catch (err) {
+      console.error("AI provider failed:", err instanceof Error ? err.message : err);
+      if (!apiKey) throw err;
+    }
+  }
 
   const res = await fetch("https://api.x.ai/v1/responses", {
     method: "POST",
@@ -433,6 +478,13 @@ export const generatePlan = createServerFn({ method: "POST" })
       VALUES (${userId}, ${Number(row.id)}, 1)
       ON CONFLICT (user_id) DO UPDATE SET plan_id = EXCLUDED.plan_id
     `;
+
+    try {
+      const { sendDripDay1 } = await import("./drip-email.server");
+      await sendDripDay1(sql, userId);
+    } catch (err) {
+      console.error("[drip] day 1 error:", err instanceof Error ? err.message : err);
+    }
 
     return rowToSaved(row);
   });

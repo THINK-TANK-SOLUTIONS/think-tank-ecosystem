@@ -20,6 +20,13 @@ export type VenturePlaybook = {
   doneWhen: string;
 };
 
+/** Old slugs that should redirect to their renamed venture. */
+export const legacyVentureSlugs: Record<string, string> = {
+  "terrascape-oasis": "terraform-oasis",
+  terraedutainment: "terraform-edutainment",
+  yourspace: "privacy-pod",
+};
+
 export type Venture = {
   slug: string;
   name: string;
@@ -30,7 +37,10 @@ export type Venture = {
   category: string;
   revenueModel: string;
   audience: string;
-  pricing: { name: string; price: string; note: string }[];
+  /** `price` is optional: omit it where the brief gives no pricing (renders as an offer item). */
+  pricing: { name: string; price?: string; note: string }[];
+  /** Primary call to action, taken from the MVB brief. */
+  cta: { label: string; joinedLabel: string; note: string };
   howItWorks: { step: string; body: string }[];
   firstWeek: VenturePlaybook;
   features: { title: string; body: string }[];
@@ -43,22 +53,48 @@ export const ventures: Venture[] = [
     name: "Think Tank Solutions AI",
     shortName: "Solutions",
     oneLiner:
-      "The mothership. Full AI automation, agentic systems, and workflow design for people who actually ship.",
+      "A build studio that provisions complete, operator-grade AI operating systems for service organizations — done for you.",
     manifesto:
-      "Most agencies sell you a stack you cannot run. We design systems you can operate in thirty minutes a day — then we get out of the way.",
+      "Your operation lives in one person’s head and six spreadsheets, and generic SaaS won’t encode your regulatory reality. We build backward from the documented failure modes of your industry — Failure-First Frontier Systematic Thinking — and codify the operation into a system that enforces itself. Proof is shipped: Genesis AOS encodes a 50-standard NJ DDD compliance engine with evidence-locked billing.",
     accent: "sage",
-    category: "Automation & agents",
-    revenueModel: "Services + licensing",
-    audience: "Operators, agencies, and ambitious solopreneurs",
+    category: "AI operating systems",
+    revenueModel:
+      "Done-for-you build engagements + storefront of original SOPs, workflows, and agent blueprints",
+    audience:
+      "Owner-operators and executive directors of 5–150 person service organizations — day habilitation providers, clinics, agencies, contractors — who tried off-the-shelf software and now pay staff to work around it.",
     pricing: [
-      { name: "Blueprint", price: "Free", note: "Foundry Finn, unlimited runs" },
-      { name: "Operator", price: "$49/mo", note: "Workflow design + prompt library" },
-      { name: "Foundry", price: "$149/mo", note: "Agent systems, custom automations" },
+      {
+        name: "Foundry Finn",
+        price: "Free",
+        note: "Free plan — the entry point. Plan your launch before you build.",
+      },
+      {
+        name: "Done-for-you build",
+        note: "A complete operating system for your organization, provisioned by us. Book a build to scope it.",
+      },
+      {
+        name: "Blueprint storefront",
+        note: "Original SOPs, workflows, and agent blueprints from the engine behind Genesis AOS.",
+      },
     ],
+    cta: {
+      label: "Book a build",
+      joinedLabel: "Build requested",
+      note: "Discovery call first. We scope the build against your actual compliance reality.",
+    },
     howItWorks: [
-      { step: "Map the work", body: "We inventory the jobs you repeat every week — intake, follow-up, content, billing." },
-      { step: "Design the agents", body: "Each job gets a prompt, a trigger, and a human checkpoint. No black boxes." },
-      { step: "Run the loop", body: "Thirty minutes a day. The system does the rest. You show up in person where it counts." },
+      {
+        step: "Map the failure modes",
+        body: "We start from the documented ways operations like yours break — audits, handoffs, billing — not from a feature list.",
+      },
+      {
+        step: "Codify the operation",
+        body: "Your real standards become rules the system enforces, so the work is auditable and delegable.",
+      },
+      {
+        step: "Deploy and hand over",
+        body: "A done-for-you deployment your team runs, with the reasoning behind every rule written down.",
+      },
     ],
     firstWeek: {
       minutes: 40,
@@ -75,9 +111,18 @@ export const ventures: Venture[] = [
       doneWhen: "seven 30-minute blocks are on the calendar and three prompts live in one note.",
     },
     features: [
-      { title: "Agentic workflows", body: "Multi-step agents for research, outreach, and ops — scoped, logged, reversible." },
-      { title: "Local-first strategy", body: "Every play is calibrated to a zip code, not a worldwide TAM slide." },
-      { title: "Organic 10X", body: "Ten channels, one daily routine. No ad spend required." },
+      {
+        title: "Failure-first design",
+        body: "Built backward from industry failure modes, forward from nothing.",
+      },
+      {
+        title: "Compliance you can audit",
+        body: "Standards encoded into daily operations, not kept in a binder.",
+      },
+      {
+        title: "Shipped proof",
+        body: "Genesis AOS: a 50-standard NJ DDD compliance engine with evidence-locked billing.",
+      },
     ],
     dripDay: 7,
   },
@@ -86,22 +131,38 @@ export const ventures: Venture[] = [
     name: "Think Tank Digital",
     shortName: "Digital",
     oneLiner:
-      "300+ premium digital products. Bentley quality, Honda prices. Shopify, Etsy, Gumroad — already packed.",
+      "Original Foundational Canon products and installable AI-Friendly System Standard™ websites. Personalize in minutes, own for life.",
     manifesto:
-      "Digital shelves are full of junk templates. Ours are built like products: tight copy, real use, prices people will actually pay.",
+      "Everything affordable is either a blank template that leaves you stranded or thin PLR filler dressed as a product. Ours is original, source-verified work — never resold purchased material. Every system ships as a complete working install with one editable config file, an AI Prompt Pack, and lifetime ownership. If updating it requires becoming a developer, we consider the design failed.",
     accent: "steel",
     category: "Digital products",
-    revenueModel: "Product sales",
-    audience: "Creators and operators who need assets yesterday",
+    revenueModel: "One-time purchase — no subscription",
+    audience:
+      "Self-directed adults rebuilding focus and discipline, and small operators — tutors, therapists, solo consultants, nonprofit coordinators — who need to look professional this week without a developer or a monthly subscription.",
     pricing: [
-      { name: "Single", price: "$9–$29", note: "One asset, lifetime files" },
-      { name: "Collection", price: "$49", note: "A full kit for one niche" },
-      { name: "Vault", price: "$19/mo", note: "Everything, updated weekly" },
+      { name: "Readers", price: "$9–12", note: "Foundational Canon, authored from proven books" },
+      { name: "Planners", price: "$19–24", note: "Foundational Canon planners" },
+      { name: "Legacy Bundles", price: "$34–39", note: "Foundational Canon bundles" },
+      {
+        name: "Installable systems",
+        note: "ClassroomHub, Client Welcome Portal, Volunteer Hub — one config file, AI Prompt Pack, lifetime ownership",
+      },
     ],
+    cta: {
+      label: "Get the free starter system",
+      joinedLabel: "On the list",
+      note: "Start with the free starter system. No subscription, ever.",
+    },
     howItWorks: [
-      { step: "Pick a collection", body: "Niches, not noise. Each kit is built around a real local business motion." },
-      { step: "Brand it in an hour", body: "Swap colors, name, and city. The structure is already done." },
-      { step: "List everywhere", body: "Files are packed for Shopify, Etsy, and Gumroad. One upload, three storefronts." },
+      {
+        step: "Pick a ladder",
+        body: "A Foundational Canon reader, planner, or bundle — or an installable website system.",
+      },
+      {
+        step: "Personalize in minutes",
+        body: "Edit one config file. The AI Prompt Pack does the rest of the wording.",
+      },
+      { step: "Own it for life", body: "No subscription. The files are yours." },
     ],
     firstWeek: {
       minutes: 50,
@@ -115,12 +176,19 @@ export const ventures: Venture[] = [
       ],
       script:
         "[Service] in [neighborhood], [zip]. Three prices. Text [number]. Same-week slots. No funnel.",
-      doneWhen: "a zip-named one-pager exists as a PDF and a draft listing, and 10 copies are printed.",
+      doneWhen:
+        "a zip-named one-pager exists as a PDF and a draft listing, and 10 copies are printed.",
     },
     features: [
-      { title: "Ready listings", body: "Titles, bullets, and SEO copy included — not a blank Canva file." },
-      { title: "Local variants", body: "Swap the city and the offer still reads as native." },
-      { title: "No bloated bundles", body: "Fewer, better products. We would rather sell 300 great ones than 3,000 fillers." },
+      {
+        title: "Original, source-verified",
+        body: "Never resold purchased material. No PLR filler.",
+      },
+      {
+        title: "Complete working installs",
+        body: "One editable config file and an AI Prompt Pack in every system.",
+      },
+      { title: "Lifetime ownership", body: "Buy once. No monthly rent." },
     ],
     dripDay: 3,
   },
@@ -129,22 +197,43 @@ export const ventures: Venture[] = [
     name: "TerraForm Sovereign AI",
     shortName: "TerraForm",
     oneLiner:
-      "Angi's List of the AI era. Vetted AI providers for small businesses who are tired of guessing.",
+      "The trust layer for AI services. A marketplace of vetted providers — Certified Conductors — arranged by the Brand Symphony Arrangement Method.",
     manifesto:
-      "The AI marketplace is a flea market. We only list people we would hire for our own shops — with reviews, scopes, and a price you can defend.",
+      "There is no trust layer in AI services: buyers can’t verify capability, good providers can’t signal it, so everyone defaults to price and quality loses. Here, vetting is a credential, not a checkbox — Certified Conductor status is earned through a structured course and test. The Brand Symphony Arrangement Method maps your actual pain points to five defined AI agents before anyone quotes a price, so you know what you’re buying before you meet a seller.",
     accent: "forest",
     category: "Marketplace",
-    revenueModel: "Marketplace commission",
-    audience: "Small businesses hiring AI help",
+    revenueModel: "Two-sided marketplace",
+    audience:
+      "Small and mid-sized business owners, 30–55, who know they need AI implemented but can’t tell a competent operator from a hustler with a landing page. Also: skilled AI freelancers tired of racing to the bottom.",
     pricing: [
-      { name: "Browse", price: "Free", note: "Search vetted providers" },
-      { name: "Hire", price: "8% fee", note: "Paid by the provider on close" },
-      { name: "Featured", price: "$39/mo", note: "Provider boost in local results" },
+      {
+        name: "For businesses",
+        note: "Your pain points mapped to five defined AI agents before anyone quotes a price",
+      },
+      {
+        name: "Certified Conductor",
+        note: "For AI providers — status earned through a structured course and test",
+      },
+      { name: "Five portals", note: "Overture, Audience, First Chair, Maestro, and Open Score" },
     ],
+    cta: {
+      label: "Join the waitlist",
+      joinedLabel: "On the waitlist",
+      note: "Businesses and Conductors both welcome. Bookings open when the platform backend is live.",
+    },
     howItWorks: [
-      { step: "Tell us the job", body: "Website, automations, content, bookkeeping — scoped in plain language." },
-      { step: "Meet three vetted shops", body: "We match by zip, stack, and past work. No cold inboxes." },
-      { step: "Hire with a guarantee", body: "Escrow-style milestones. If they ghost, we re-match." },
+      {
+        step: "Name the pain",
+        body: "Tell us what is breaking in plain language. No technical vocabulary required.",
+      },
+      {
+        step: "Arrange the score",
+        body: "The Brand Symphony Arrangement Method maps it to five defined AI agents — before any quote.",
+      },
+      {
+        step: "Meet a Certified Conductor",
+        body: "Only providers who earned the credential through the course and test.",
+      },
     ],
     firstWeek: {
       minutes: 45,
@@ -158,36 +247,65 @@ export const ventures: Venture[] = [
       ],
       script:
         "I’m hiring for [job] in [zip]. Fixed deliverable, not hourly. What’s the smallest job you’ll take, and what do you need from me on day one?",
-      doneWhen: "a one-page scope exists, you are on the list, and one local first name is in your notes.",
+      doneWhen:
+        "a one-page scope exists, you are on the list, and one local first name is in your notes.",
     },
     features: [
-      { title: "Human vetting", body: "No self-serve dump of 10,000 'AI experts.' Every listing is reviewed." },
-      { title: "Local matching", body: "Prefer a provider who can sit in your shop. Remote is a fallback, not a default." },
-      { title: "Transparent scopes", body: "Fixed deliverables, not hourly fog." },
+      {
+        title: "Vetting as a credential",
+        body: "Certified Conductor status is earned, not bought.",
+      },
+      {
+        title: "Know before you buy",
+        body: "The arrangement is defined before a seller enters the room.",
+      },
+      {
+        title: "Welcoming to the non-technical",
+        body: "Five portals, one clear path from pain point to provider.",
+      },
     ],
     dripDay: 5,
   },
   {
-    slug: "terrascape-oasis",
-    name: "TerraScape Oasis AI",
-    shortName: "TerraScape",
+    slug: "terraform-oasis",
+    name: "TerraForm Oasis AI",
+    shortName: "Oasis",
     oneLiner:
-      "Landscaping, pools, outdoor architecture. Vetted crews, guaranteed pricing, matched to your block.",
+      "Verified outdoor property service. Book, monitor, pay, and subscribe in one place — maintenance, seasonal retainers, pools, and large projects.",
     manifesto:
-      "Outdoor work still runs on whoever answers the phone. We put real crews, real photos, and a price you can hold them to.",
+      "Premium landscaping is sold like a favor: no visibility, no proof the crew came, invoices that arrive whenever. TerraForm Oasis offers verified service, not promised service — every visit produces timestamped visual evidence tied to the invoice, and the subscription reschedules itself around weather and season without a call. You see your property whether or not you are standing on it.",
     accent: "moss",
-    category: "Outdoor services",
-    revenueModel: "Subscription + commission",
-    audience: "Homeowners and property managers",
+    category: "Outdoor property services",
+    revenueModel: "Maintenance subscriptions, seasonal retainers, and project engagements",
+    audience:
+      "Owners of high-value properties, 40–70, in affluent and second-home markets — plus the property managers and HOA boards who answer for them.",
     pricing: [
-      { name: "Homeowner", price: "Free", note: "Match + guaranteed quote" },
-      { name: "Season pass", price: "$29/mo", note: "Priority crews, seasonal plans" },
-      { name: "Crews", price: "6% fee", note: "On completed jobs" },
+      {
+        name: "Monthly maintenance plans",
+        note: "Scheduled, verified, and billed without phone tag",
+      },
+      { name: "Seasonal retainers", note: "Rescheduled around weather and season automatically" },
+      { name: "Pool service", note: "Visits documented with timestamped evidence" },
+      {
+        name: "Yard and hardscape projects",
+        note: "Large-scale work, quoted and scheduled in one place",
+      },
     ],
+    cta: {
+      label: "Join the estimate waitlist",
+      joinedLabel: "On the waitlist",
+      note: "Estimates open when booking launches. Service area to be announced.",
+    },
     howItWorks: [
-      { step: "Show the yard", body: "Photos, zip, and what you want by season — not a 14-field form." },
-      { step: "Get a locked quote", body: "Two or three vetted crews. The number you see is the number you pay." },
-      { step: "Schedule like a neighbor", body: "Local crews, local windows. We track the job to done." },
+      {
+        step: "Request an estimate",
+        body: "Tell us about the property and what it needs by season.",
+      },
+      {
+        step: "Subscribe or schedule",
+        body: "A maintenance plan, a seasonal retainer, or a single project — in one place.",
+      },
+      { step: "Verify every visit", body: "Timestamped visual evidence tied to each invoice." },
     ],
     firstWeek: {
       minutes: 40,
@@ -201,12 +319,22 @@ export const ventures: Venture[] = [
       ],
       script:
         "Here are two photos of the yard in [zip]. I want [job] done by [month]. What’s the number I would actually pay — not a range?",
-      doneWhen: "two photos, three bullets, two quotes (or two non-answers), and you’re on the list.",
+      doneWhen:
+        "two photos, three bullets, two quotes (or two non-answers), and you’re on the list.",
     },
     features: [
-      { title: "Guaranteed pricing", body: "The quote is a contract, not a conversation starter." },
-      { title: "Seasonal intelligence", body: "Pools, leaves, snow, irrigation — sequenced to your climate, not a national calendar." },
-      { title: "Crew reputation", body: "Before-and-afters from the same zip, not stock photos of Tuscany." },
+      {
+        title: "Verified, not promised",
+        body: "Every visit produces timestamped visual evidence tied to the invoice.",
+      },
+      {
+        title: "Self-scheduling seasons",
+        body: "Weather and season changes handled without a call.",
+      },
+      {
+        title: "Built for absentee owners",
+        body: "See the property whether or not you are there.",
+      },
     ],
     dripDay: 8,
   },
@@ -215,22 +343,40 @@ export const ventures: Venture[] = [
     name: "Genesis Revitalization Group",
     shortName: "Genesis",
     oneLiner:
-      "New Jersey DDD adult day center. Compliance-first, AI-augmented care that still feels like a community.",
+      "Day habilitation for adults with intellectual and developmental disabilities in Atlantic City, NJ — run on a system that produces the evidence.",
     manifesto:
-      "Care is not a growth hack. We built Genesis to pass audit, hold families, and give staff tools that reduce paperwork — not replace people.",
+      "Families are asked to trust without seeing the day. Coordinators place individuals with providers whose documentation collapses under monitoring. At Genesis, fifty NJ DDD monitoring standards are codified directly into daily operations with a five-business-day cure path. We do not describe our quality — the system produces the evidence. A 501(c)(3).",
     accent: "clay",
-    category: "Community care",
-    revenueModel: "Service fees (Medicaid / Medicare)",
-    audience: "Families and referring agencies in New Jersey",
+    category: "Day habilitation · 501(c)(3)",
+    revenueModel: "NJ DDD day habilitation program",
+    audience:
+      "Support coordinators and NJ DDD case managers who refer placements, and the parents, siblings, and guardians choosing where their adult family member spends their days.",
     pricing: [
-      { name: "Day program", price: "Medicaid", note: "NJ DDD billing, no surprise invoices" },
-      { name: "Family portal", price: "Included", note: "Updates, photos, care notes" },
-      { name: "Agency partners", price: "Contract", note: "Referral and compliance packets" },
+      {
+        name: "Day habilitation program",
+        note: "Every 15-minute service interval documented; billing locked to evidence",
+      },
+      { name: "Family portal", note: "Families have their own portal into the program" },
+      {
+        name: "Coordinator referral packet",
+        note: "Program-level information for support coordination offices",
+      },
     ],
+    cta: {
+      label: "Book a family tour",
+      joinedLabel: "Tour requested",
+      note: "Families: visit during program hours. Coordinators: ask for the referral packet.",
+    },
     howItWorks: [
-      { step: "Intake with dignity", body: "ISP-aligned, paper-light. Families are not asked to retell the story five times." },
-      { step: "A real day", body: "Meals, movement, skills, and community — not a television warehouse." },
-      { step: "Notes that write themselves", body: "Staff capture care; AI drafts the compliance layer. Humans sign." },
+      {
+        step: "Tour the program",
+        body: "Visit in person during program hours. Meet staff, not only the director.",
+      },
+      { step: "Plan the start", body: "Coordinator and family work through intake together." },
+      {
+        step: "See the record",
+        body: "Service is documented in 15-minute intervals; families have their own portal.",
+      },
     ],
     firstWeek: {
       minutes: 60,
@@ -244,12 +390,19 @@ export const ventures: Venture[] = [
       ],
       script:
         "I’m calling about adult day services. I have the ISP. What do I bring on the first visit, and who do I talk to if a note is wrong?",
-      doneWhen: "you have walked the floor, you know what to bring, and a named person is on your notes.",
+      doneWhen:
+        "you have walked the floor, you know what to bring, and a named person is on your notes.",
     },
     features: [
-      { title: "Compliance-first", body: "Built around NJ DDD, not bolted on after a citation." },
-      { title: "AI for paperwork", body: "Progress notes, attendance, and billing packets — drafted, never auto-sent." },
-      { title: "Family-visible", body: "A portal that shows the day, not a black hole between drop-off and pickup." },
+      {
+        title: "Standards in operations",
+        body: "Fifty NJ DDD monitoring standards built into the daily routine, with a five-business-day cure path.",
+      },
+      {
+        title: "Evidence-locked billing",
+        body: "Billing ties to documented service, interval by interval.",
+      },
+      { title: "Family portal", body: "Families have their own window into the program." },
     ],
     dripDay: 6,
   },
@@ -258,22 +411,41 @@ export const ventures: Venture[] = [
     name: "ClientFlow AI",
     shortName: "ClientFlow",
     oneLiner:
-      "AI-powered CRM for solopreneurs. Intake, follow-ups, pipeline, and invoicing — without a sales team attached.",
+      "Client operations for 2–25 person service businesses. Intake, scheduling, communication, documentation, and billing in one system — and AI that drafts the follow-up you forgot.",
     manifesto:
-      "CRMs were built for 40-person sales orgs. ClientFlow is built for one person who still has to do the work.",
+      "Client work leaks between a CRM you don’t use, a scheduler, a chat app, and a shared inbox. Nobody knows a client’s status without asking a person, and revenue walks out on the forgotten ones. ClientFlow was built by an operator who had to run a compliance-grade operation first, so the audit trail is native. One thread, one status, one record per client — and the AI drafts the next action instead of reporting that nothing happened.",
     accent: "teal",
-    category: "SaaS / CRM",
-    revenueModel: "SaaS",
-    audience: "Solopreneurs and two-person shops",
+    category: "SaaS · client operations",
+    revenueModel: "Multi-tenant SaaS",
+    audience:
+      "Owners of 2–25 person service businesses — agencies, clinics, consultancies, trades — already paying for four tools and resentful about it.",
     pricing: [
-      { name: "Starter", price: "$0", note: "50 contacts, basic pipeline" },
-      { name: "Pro", price: "$29/mo", note: "Unlimited contacts, AI follow-ups, invoicing" },
-      { name: "Desk", price: "$59/mo", note: "Shared inbox + two seats" },
+      { name: "Intake + scheduling", note: "Clients land in one place, booked in the same system" },
+      {
+        name: "Communication + documentation",
+        note: "One thread, one status, one record per client",
+      },
+      { name: "Billing", note: "Invoicing in the same record as the work" },
+      { name: "AI follow-up", note: "Drafts the next action for you to send" },
     ],
+    cta: {
+      label: "Join the waitlist",
+      joinedLabel: "On the waitlist",
+      note: "ClientFlow is in active build. Waitlist members hear first when tenants open.",
+    },
     howItWorks: [
-      { step: "Catch the lead", body: "Forms, voicemail, Instagram DMs — they land in one queue." },
-      { step: "Follow up like a human", body: "AI drafts. You send. Cadences stop the moment they reply." },
-      { step: "Get paid", body: "Estimate to invoice to receipt, without exporting a CSV." },
+      {
+        step: "One record per client",
+        body: "Intake, schedule, messages, documents, and invoices in a single tenant-isolated system.",
+      },
+      {
+        step: "AI drafts the next action",
+        body: "Follow-ups get written for you. You decide what goes out.",
+      },
+      {
+        step: "The audit trail is native",
+        body: "Every change is on the record, not bolted on later.",
+      },
     ],
     firstWeek: {
       minutes: 35,
@@ -287,12 +459,16 @@ export const ventures: Venture[] = [
       ],
       script:
         "Hi [name] — [your name] from [shop / neighborhood]. Good to meet you. If anyone asks about [job], you’ve got my number. I’ll check in next week either way.",
-      doneWhen: "every name from the week is in four stages with a date, and one saved reply exists.",
+      doneWhen:
+        "every name from the week is in four stages with a date, and one saved reply exists.",
     },
     features: [
-      { title: "Intake that listens", body: "A three-question form, not a 40-field monster." },
-      { title: "Pipeline you can see", body: "New, talking, booked, paid. That is the whole board." },
-      { title: "Invoices included", body: "No QuickBooks round-trip for a $180 job." },
+      {
+        title: "Replaces the duct-taped stack",
+        body: "CRM, scheduler, chat, and shared inbox — one system.",
+      },
+      { title: "Tenant-isolated", body: "Each business has its own space." },
+      { title: "Results-first AI", body: "It proposes the next step instead of just reporting." },
     ],
     dripDay: 2,
   },
@@ -301,22 +477,43 @@ export const ventures: Venture[] = [
     name: "My Ancestry Speaks",
     shortName: "Ancestry",
     oneLiner:
-      "AI-powered ancestry preservation. Genealogy data becomes a living narrative your family will actually hear.",
+      "Ancestral Encounters: studio-enhanced, emotionally gripping films that bring your ancestors — or an AI rendition of them — to life.",
     manifesto:
-      "Trees are not stories. We take the names, the passenger lists, the photographs, and we make them speak — in the voice of the people who lived them.",
+      "Records give you names and dates, not the person. An Ancestral Encounter is built in the studio from what your family actually holds — facts, records, family input, photos, videos, and voice edits — and shaped into an encounter you will not forget. Consent comes first at every step, and the family decides what is used. This is not a DNA test. It is the story, told with care.",
     accent: "rose",
-    category: "Heritage",
-    revenueModel: "Subscription",
-    audience: "Families preserving oral and archival history",
+    category: "Heritage · Ancestral Encounters",
+    revenueModel: "Studio-produced Ancestral Encounters",
+    audience:
+      "The designated keeper of a family’s history — often 35–60 — who wants the people behind the names to be seen and heard.",
     pricing: [
-      { name: "Listener", price: "Free", note: "One story, one branch" },
-      { name: "Archive", price: "$12/mo", note: "Unlimited stories, voice, photos" },
-      { name: "House", price: "$29/mo", note: "Shared family vault + print book" },
+      {
+        name: "Ancestral Encounter",
+        note: "A studio-enhanced encounter with an ancestor, or an AI rendition, built from your family’s material",
+      },
+      {
+        name: "Family input session",
+        note: "Facts, records, stories, photos, videos, and voice — gathered with the family",
+      },
+      {
+        name: "Consent-first",
+        note: "Nothing is used without the family’s explicit, revocable consent",
+      },
     ],
+    cta: {
+      label: "Join the waitlist",
+      joinedLabel: "On the waitlist",
+      note: "Tell us whose story you want to hear. We will reach out when the studio opens.",
+    },
     howItWorks: [
-      { step: "Bring what you have", body: "A GEDCOM, a shoebox of photos, or a voice memo from an aunt." },
-      { step: "We write the life", body: "A narrative, not a database dump. Cited, editable, honest about gaps." },
-      { step: "They speak", body: "Optional voice. Print a book. Share a private link at the reunion." },
+      {
+        step: "Gather what the family holds",
+        body: "Facts, records, family input, photos, videos, and voice recordings.",
+      },
+      {
+        step: "The studio shapes it",
+        body: "Edits, voice work, and AI rendition where the family consents to it.",
+      },
+      { step: "The encounter", body: "A moving, studio-enhanced film your family can share." },
     ],
     firstWeek: {
       minutes: 50,
@@ -330,36 +527,62 @@ export const ventures: Venture[] = [
       ],
       script:
         "I’m trying to keep [name]’s story while we still can. Could I record ten minutes? Who we miss, the house, the job — whatever you want on the tape. I’ll send you the file.",
-      doneWhen: "a 10-minute memo exists, three sourced facts are written down, and you are on the list.",
+      doneWhen:
+        "a 10-minute memo exists, three sourced facts are written down, and you are on the list.",
     },
     features: [
-      { title: "Living narratives", body: "Chapters, not nodes. People read them on a Sunday." },
-      { title: "Source-true", body: "Every claim can be opened. We do not invent grandparents." },
-      { title: "Voice optional", body: "A reading in a family voice — never a cartoon narrator." },
+      {
+        title: "Studio-enhanced",
+        body: "Produced, edited, and finished — not an auto-generated slideshow.",
+      },
+      {
+        title: "Built from your material",
+        body: "Records, photos, videos, and family input — not DNA.",
+      },
+      { title: "Consent at every step", body: "Explicit and revocable. The family decides." },
     ],
     dripDay: 11,
   },
   {
-    slug: "terraedutainment",
-    name: "TerraEduTainment AI",
+    slug: "terraform-edutainment",
+    name: "TerraForm EduTainment AI",
     shortName: "EduTainment",
     oneLiner:
-      "Family-friendly education. Failure-first thinking for the next generation — curiosity over compliance.",
+      "The learning channel where how humans failed first is half the lesson — with a printable adventure pack for every video.",
     manifesto:
-      "School taught people to fear being wrong. We teach the opposite: try, break it, notice, try again. That is how operators are made.",
+      "Kids’ educational media ends when the video does, and it presents invention as magic. We tell the failures before the success — the 1857, 1858, and 1865 cable attempts before 1866 — and every video comes with a printable adventure pack so kids learn with their hands, not just their eyes. One deeply researched topic becomes 12–15 coordinated outputs. Season one: Secret Systems That Run the Modern World.",
     accent: "slate",
-    category: "Education",
-    revenueModel: "Subscription",
-    audience: "Families and after-school programs",
+    category: "Edutainment",
+    revenueModel: "Printable packs, lesson packs, unit studies, and Curiosity Club membership",
+    audience:
+      "Parents of 5–12 year olds who want screen time they don’t feel bad about, teachers who need a lesson they can use tomorrow morning, and homeschoolers who want a complete unit study.",
     pricing: [
-      { name: "Kitchen table", price: "$9/mo", note: "One learner, weekly missions" },
-      { name: "Household", price: "$19/mo", note: "Up to four learners" },
-      { name: "Studio", price: "$49/mo", note: "Classroom / co-op license" },
+      { name: "Free mini adventure pack", note: "Start here — a taste of the printable packs" },
+      {
+        name: "Printable adventure packs",
+        note: "Hands-on follow-through for every flagship video",
+      },
+      {
+        name: "Teacher lesson packs + homeschool unit studies",
+        note: "Ready to teach, organized end to end",
+      },
+      { name: "Curiosity Club", note: "Monthly membership" },
     ],
+    cta: {
+      label: "Get the free mini adventure pack",
+      joinedLabel: "On the list",
+      note: "Join the list and the free mini adventure pack is yours.",
+    },
     howItWorks: [
-      { step: "A weekly mission", body: "Build, write, or fix something real. No worksheet graveyard." },
-      { step: "Fail on purpose", body: "The first attempt is supposed to break. The lesson is in the repair." },
-      { step: "Show the work", body: "A short film, a sketch, a shop project — evidence, not a grade." },
+      { step: "Watch the flagship video", body: "A deeply researched explainer — failures first." },
+      {
+        step: "Pick up the pack",
+        body: "Printable adventure packs, lesson packs, or a full unit study.",
+      },
+      {
+        step: "Learn with hands",
+        body: "Build, test, and break things the way the inventors did.",
+      },
     ],
     firstWeek: {
       minutes: 45,
@@ -376,9 +599,12 @@ export const ventures: Venture[] = [
       doneWhen: "two photos (break + repair) exist and one adult has seen them.",
     },
     features: [
-      { title: "Failure-first", body: "We score recovery, not perfection." },
-      { title: "Family-safe", body: "No comment sections. No stranger chat. Parents see everything." },
-      { title: "Hands, not just screens", body: "Half the missions leave the laptop. That is the point." },
+      { title: "Failure-first stories", body: "How humans failed is half the lesson." },
+      {
+        title: "Printables for every video",
+        body: "Kids learn with their hands, not just their eyes.",
+      },
+      { title: "Quietly rigorous", body: "Every factual claim traces to a source." },
     ],
     dripDay: 10,
   },
@@ -387,22 +613,37 @@ export const ventures: Venture[] = [
     name: "SimuTrade Labs",
     shortName: "SimuTrade",
     oneLiner:
-      "Trading simulation and analytics. Real data, zero risk. Built for universities and people who want to learn without lighting money on fire.",
+      "Education and simulation for funded-account evaluation candidates. A lab, not a signal service. Education only — not financial advice.",
     manifesto:
-      "Paper trading is usually a toy. SimuTrade is a lab: real tapes, real slippage, no profit motive on your losses.",
+      "Challenge candidates fail on mechanics — daily loss limits, position sizing, consistency rules — not on market opinion. Nobody teaches the rulebook. SimuTrade Labs is a lab: a curriculum built backward from documented failure patterns, and a practice environment that mirrors evaluation rules rather than idealized conditions. We do not sell a dream; we sell repetitions under the constraints that actually eliminate people. Education only. Not financial or investment advice. Trading involves risk of loss.",
     accent: "mist",
-    category: "Markets / education",
-    revenueModel: "Subscription at infrastructure cost",
-    audience: "Students, universities, and self-taught traders",
+    category: "Trader education · education only",
+    revenueModel: "Education program + simulation environment",
+    audience:
+      "Retail traders 22–45 who have paid for at least one funded-account challenge and blown it, usually on a rule violation rather than a bad thesis.",
     pricing: [
-      { name: "Lab", price: "$9/mo", note: "Priced at infra. We are not your broker." },
-      { name: "Cohort", price: "$6/seat", note: "University and club licenses" },
-      { name: "Research", price: "At cost", note: "Historical + live data pipes" },
+      { name: "Curriculum", note: "Built around the specific ways candidates fail evaluations" },
+      { name: "Simulation environment", note: "Rule-accurate practice conditions" },
+      { name: "Drawdown discipline drills", note: "Repetitions under evaluation constraints" },
     ],
+    cta: {
+      label: "Join the waitlist",
+      joinedLabel: "On the waitlist",
+      note: "Education only. Not financial advice. No guarantee of passing any evaluation. Trading involves risk of loss.",
+    },
     howItWorks: [
-      { step: "Pick a market", body: "Equities, futures, FX — replay or paper-live." },
-      { step: "Run the book", body: "Fills include spread and slippage. No fantasy fills." },
-      { step: "Review like a desk", body: "Journal, heatmaps, and a post-trade that does not flatter you." },
+      {
+        step: "Learn the rulebook",
+        body: "Daily loss limits, position sizing, consistency rules — taught directly.",
+      },
+      {
+        step: "Practice under the rules",
+        body: "An environment that mirrors evaluation rules, not idealized conditions.",
+      },
+      {
+        step: "Drill the discipline",
+        body: "Drawdown drills built from documented failure patterns.",
+      },
     ],
     firstWeek: {
       minutes: 40,
@@ -419,33 +660,48 @@ export const ventures: Venture[] = [
       doneWhen: "a dated thesis and a next-day outcome sentence exist, with zero dollars at risk.",
     },
     features: [
-      { title: "Zero-risk capital", body: "You cannot withdraw what you never deposited." },
-      { title: "Honest fills", body: "If the tape would have missed you, we miss you." },
-      { title: "Classroom-ready", body: "Cohorts, assignments, and a professor view." },
+      { title: "A lab, not a signal service", body: "No signals, no calls, no managed money." },
+      { title: "Rule-accurate practice", body: "Constraints that mirror real evaluations." },
+      { title: "Education only", body: "Not financial advice. Risk of loss is real." },
     ],
     dripDay: 9,
   },
   {
-    slug: "yourspace",
-    name: "YourSpace",
-    shortName: "YourSpace",
+    slug: "privacy-pod",
+    name: "Privacy-Pod",
+    shortName: "Privacy-Pod",
     oneLiner:
-      "Personal YouTube. Self-hosted, locally run. Your content, your rules, no recommendation casino.",
+      "Private video on hardware you own. The YouTube experience without YouTube — shared with exactly the people you choose.",
     manifesto:
-      "You do not owe a platform your archive. YourSpace is a house for video you own — hosted on infrastructure you control.",
+      "The easy way to share video is to hand it to a company that scans it, monetizes it, recommends it to strangers, and can delete the account holding a decade of your family’s life. With Privacy-Pod, ownership is literal: the files sit on your machine, sharing is by explicit invitation, and there is no algorithm and no advertising. Nothing leaves unless you send it.",
     accent: "blush",
-    category: "Video hosting",
-    revenueModel: "Subscription",
-    audience: "Creators who want ownership more than virality",
+    category: "Private video",
+    revenueModel: "Business model to be announced",
+    audience:
+      "Privacy-conscious parents and grandparents sharing family video without feeding an algorithm, and small organizations hosting internal training that doesn’t belong on a public platform.",
     pricing: [
-      { name: "Porch", price: "$8/mo", note: "50 GB, custom domain" },
-      { name: "House", price: "$18/mo", note: "500 GB, members, RSS" },
-      { name: "Block", price: "$39/mo", note: "2 TB, team library" },
+      { name: "Free setup guide", note: "Start here — how to run your own private library" },
+      {
+        name: "Private library",
+        note: "Family videos, trainings, and kids’ content on your own hardware",
+      },
+      {
+        name: "Invite-only sharing",
+        note: "Share single videos or whole channels with exactly who you choose",
+      },
     ],
+    cta: {
+      label: "Get the free setup guide",
+      joinedLabel: "On the list",
+      note: "Join the list for the free setup guide.",
+    },
     howItWorks: [
-      { step: "Bring the files", body: "Upload, or point us at a folder you already keep." },
-      { step: "Your player, your site", body: "Embed anywhere. No follow-us-or-else interstitial." },
-      { step: "Keep the keys", body: "Export is a button, not a support ticket." },
+      { step: "Set up at home", body: "A locally hosted library on hardware you own." },
+      { step: "Upload", body: "Family videos, trainings, kids’ content." },
+      {
+        step: "Invite",
+        body: "Share a video or a whole channel with exactly the people you choose — no one else.",
+      },
     ],
     firstWeek: {
       minutes: 35,
@@ -454,17 +710,17 @@ export const ventures: Venture[] = [
       steps: [
         "List your last five public videos as URLs in a Doc. Next to each: do you have the master file, or only the upload?",
         "Download any master you do not have (YouTube Studio → Content → Download). Put them in one folder named “mine.”",
-        "Write the custom domain you want, even if you have not bought it. One line.",
-        "Join this list. Export is the point. We will not be a second landlord.",
+        "Write the names of the people you actually want to share with. One line each.",
+        "Join this list for the free setup guide. Your hardware, your library, invite-only sharing.",
       ],
       script:
-        "I’m moving the archive off the recommendation casino. I have the masters. The domain will be [name]. That’s the whole brief.",
-      doneWhen: "five URLs, a “mine” folder with masters, and a domain name written down.",
+        "I’m moving our family videos off the recommendation casino. I have the masters. Only [names] get an invite. That’s the whole brief.",
+      doneWhen: "five URLs, a “mine” folder with masters, and a short invite list written down.",
     },
     features: [
-      { title: "No algorithm", body: "People watch because they meant to. That is a feature." },
-      { title: "Self-hosted option", body: "Run it on your box. We are a convenience, not a lock." },
-      { title: "Members, not ads", body: "If you charge, you keep it. We do not run a marketplace on your back." },
+      { title: "No algorithm", body: "No recommendations to strangers." },
+      { title: "No advertising", body: "Your memories are not inventory." },
+      { title: "Literal ownership", body: "The files sit on your machine." },
     ],
     dripDay: 4,
   },
@@ -473,22 +729,31 @@ export const ventures: Venture[] = [
     name: "SiteForge",
     shortName: "SiteForge",
     oneLiner:
-      "AI web app builder. Deploy to your own infra. No vendor lock-in, no $12,000 agency invoice.",
+      "One engine, many skins. The template engine behind the AI-Friendly System Standard™ — a working site by changing which sections are on and what the labels say.",
     manifesto:
-      "Agencies sell you a site you cannot touch. SiteForge builds a site you can keep — code, hosting, and the keys.",
+      "Website builders sell blank canvases and monthly rent. SiteForge is one reusable architecture — navigation, hero, announcements, resources, downloads, gallery, FAQ, contact, theme settings, and one site-data.json — that ships as any product. Every improvement to the engine upgrades the whole catalog at once. Five gates govern every build: can a beginner use it, can AI update it, can it deploy fast, does it cut repetitive work, does it improve a daily workflow. Any “no” means simplify until it’s a yes.",
     accent: "sand",
-    category: "Web builder",
-    revenueModel: "Subscription",
-    audience: "Operators who need a real site, not a brochure they rent",
+    category: "Site engine",
+    revenueModel: "Engine licenses + reseller partnerships",
+    audience:
+      "Solo operators and small organizations who need a working site this week and will never open a code editor — and the resellers and consultants who deliver client sites without hiring a developer.",
     pricing: [
-      { name: "Forge", price: "$19/mo", note: "One site, export anytime" },
-      { name: "Yard", price: "$39/mo", note: "Three sites + custom domain" },
-      { name: "Shop", price: "$59/mo", note: "Apps, auth, and your own database" },
+      { name: "Engine license", note: "One architecture, one site-data.json, any product" },
+      { name: "Reseller partner", note: "Deliver client sites without hiring a developer" },
+      { name: "Skinned products", note: "ClassroomHub, Client Welcome Portal, Volunteer Hub" },
     ],
+    cta: {
+      label: "Join the waitlist",
+      joinedLabel: "On the waitlist",
+      note: "Read the docs first. We will reach out when licenses open.",
+    },
     howItWorks: [
-      { step: "Describe the job", body: "A landing page, a booking flow, a directory. Plain language." },
-      { step: "Watch it stand up", body: "We generate the app, not a locked theme. You can read the files." },
-      { step: "Deploy where you want", body: "Our hosting, or yours. Leaving is supposed to be easy." },
+      {
+        step: "Choose the sections",
+        body: "Turn on what you need: hero, resources, downloads, gallery, FAQ, contact.",
+      },
+      { step: "Edit one file", body: "Labels and content live in a single site-data.json." },
+      { step: "Deploy", body: "Fast, and updatable by AI." },
     ],
     firstWeek: {
       minutes: 40,
@@ -502,12 +767,19 @@ export const ventures: Venture[] = [
       ],
       script:
         "[Service] in [neighborhood], [zip]. Text [number] for a same-week slot. That’s the whole page.",
-      doneWhen: "a published URL exists with the city in sentence one and is set as the GBP website.",
+      doneWhen:
+        "a published URL exists with the city in sentence one and is set as the GBP website.",
     },
     features: [
-      { title: "Real code", body: "Export a repo. No hostage themes." },
-      { title: "Anti-agency", body: "Days, not quarters. You stay in the loop." },
-      { title: "Own the infra", body: "Domain, database, and deploys you can point somewhere else." },
+      {
+        title: "One engine, whole catalog",
+        body: "Every engine improvement upgrades every product.",
+      },
+      { title: "Learn once", body: "Every future product feels familiar." },
+      {
+        title: "Five gates",
+        body: "Beginner-usable, AI-updatable, fast to deploy, less repetitive work, a better daily workflow.",
+      },
     ],
     dripDay: 1,
   },

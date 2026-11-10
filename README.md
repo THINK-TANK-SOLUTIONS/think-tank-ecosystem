@@ -8,7 +8,7 @@ The Think Tank ecosystem site: Foundry Finn writes a complete localized business
 
 - **Foundry Finn** — three questions (skill, zip, budget). Live web research. An 11-section blueprint with click-by-click implementation playbooks.
 - **11-day launch** — where to go, what to click, what to say, done-when. Tracking after you generate a plan.
-- **11 ventures** — Solutions, Digital, TerraForm, TerraScape, Genesis, ClientFlow, Ancestry, EduTainment, SimuTrade, YourSpace, SiteForge.
+- **11 ventures** — Solutions, Digital, TerraForm Sovereign, TerraForm Oasis, Genesis, ClientFlow, Ancestry, TerraForm EduTainment, SimuTrade, Privacy-Pod, SiteForge.
 - **25 tool swaps** — leave Kajabi, ClickFunnels, HubSpot, and the rest in four steps.
 
 Organic only. $0 ad spend. Local / zip-first. Freemium.

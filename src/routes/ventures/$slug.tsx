@@ -1,17 +1,23 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Check } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PlaybookBlock } from "@/components/playbook-block";
-import { accentClass, getVenture, ventures } from "@/data/ventures";
+import { accentClass, getVenture, legacyVentureSlugs, ventures } from "@/data/ventures";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { listVentureSignups, toggleVentureSignup } from "@/lib/plans.functions";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/ventures/$slug")({
+  beforeLoad: ({ params }) => {
+    const renamed = legacyVentureSlugs[params.slug];
+    if (renamed) {
+      throw redirect({ to: "/ventures/$slug", params: { slug: renamed }, statusCode: 301 });
+    }
+  },
   component: VenturePage,
 });
 
@@ -60,10 +66,7 @@ function VenturePage() {
   return (
     <PageShell>
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1 text-sm text-muted hover:text-fg"
-        >
+        <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted hover:text-fg">
           <ArrowLeft className="size-4" /> Back to ecosystem
         </Link>
 
@@ -85,18 +88,21 @@ function VenturePage() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button onClick={() => void onJoin()} disabled={busy || isPending}>
-                {joined ? "On the list" : "Join the list"}
+                {joined ? venture.cta.joinedLabel : venture.cta.label}
               </Button>
               <Button asChild variant="secondary">
                 <Link to="/finn/app">Start with Finn instead</Link>
               </Button>
             </div>
+            <p className="mt-3 text-xs text-muted">{venture.cta.note}</p>
             <p className="mt-3 text-xs text-subtle">{venture.audience}</p>
           </div>
 
           <aside className="lg:col-span-5">
             <div className="rounded-2xl bg-surface p-6 shadow-hairline">
-              <p className="text-xs tracking-widest text-subtle uppercase">Pricing</p>
+              <p className="text-xs tracking-widest text-subtle uppercase">
+                {venture.pricing.some((p) => p.price) ? "Pricing" : "The offer"}
+              </p>
               <ul className="mt-4 space-y-4">
                 {venture.pricing.map((p) => (
                   <li key={p.name} className="flex items-baseline justify-between gap-4">
@@ -104,7 +110,9 @@ function VenturePage() {
                       <p className="text-sm text-fg">{p.name}</p>
                       <p className="text-xs text-muted">{p.note}</p>
                     </div>
-                    <p className="font-display text-lg font-semibold">{p.price}</p>
+                    {p.price ? (
+                      <p className="font-display text-lg font-semibold">{p.price}</p>
+                    ) : null}
                   </li>
                 ))}
               </ul>
@@ -115,7 +123,9 @@ function VenturePage() {
 
         <div className="mt-16">
           <p className="text-xs tracking-widest text-subtle uppercase">This week</p>
-          <h2 className="mt-2 font-display text-2xl font-semibold">Do these steps even before we open.</h2>
+          <h2 className="mt-2 font-display text-2xl font-semibold">
+            Do these steps even before we open.
+          </h2>
           <p className="mt-2 max-w-xl text-sm text-muted">
             The list is a waitlist. The work is not. Tick the steps. Join when you want the tool.
           </p>
@@ -140,9 +150,7 @@ function VenturePage() {
             <ol className="mt-6 space-y-5">
               {venture.howItWorks.map((s, i) => (
                 <li key={s.step} className="flex gap-4">
-                  <span className="font-display text-accent">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                  <span className="font-display text-accent">{String(i + 1).padStart(2, "0")}</span>
                   <div>
                     <p className="font-medium text-fg">{s.step}</p>
                     <p className="mt-1 text-sm text-muted">{s.body}</p>
@@ -173,11 +181,7 @@ function VenturePage() {
             {ventures
               .filter((v) => v.slug !== venture.slug)
               .map((v) => (
-                <Link
-                  key={v.slug}
-                  to="/ventures/$slug"
-                  params={{ slug: v.slug }}
-                >
+                <Link key={v.slug} to="/ventures/$slug" params={{ slug: v.slug }}>
                   <Badge variant="outline">{v.shortName}</Badge>
                 </Link>
               ))}
