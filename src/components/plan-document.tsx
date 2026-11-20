@@ -1,7 +1,11 @@
 import type { ReactNode } from "react";
-import { Clock, MapPin } from "lucide-react";
+import { useRef } from "react";
+import { Clock, Download, MapPin } from "lucide-react";
+import { toast } from "sonner";
+import { downloadPlan } from "@/lib/download-plan";
 import type { BusinessPlan } from "@/lib/plan-types";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { CheckableSteps } from "@/components/checkable-steps";
 import { DoneWhen } from "@/components/step-list";
 import { cn } from "@/lib/utils";
@@ -52,12 +56,25 @@ function safeHref(url: string): string | null {
 export function PlanDocument({
   plan,
   storageKey = "plan",
+  allowDownload = false,
 }: {
   plan: BusinessPlan;
   storageKey?: string;
+  allowDownload?: boolean;
 }) {
+  const report = useRef<HTMLElement>(null);
+
+  function handleDownload() {
+    if (!report.current) return;
+    try {
+      downloadPlan(report.current, plan.title);
+    } catch {
+      toast.error("Could not download this report. Please try again.");
+    }
+  }
+
   return (
-    <article className="mx-auto max-w-3xl">
+    <article ref={report} className="mx-auto max-w-3xl">
       <header className="pb-10">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="accent">{plan.niche}</Badge>
@@ -71,6 +88,14 @@ export function PlanDocument({
           {plan.title}
         </h1>
         <p className="mt-4 text-lg text-muted">{plan.executiveSummary.headline}</p>
+        {allowDownload ? (
+          <div className="mt-5" data-report-controls>
+            <Button type="button" onClick={handleDownload}>
+              <Download className="mr-2 size-4" aria-hidden="true" />
+              Download Report
+            </Button>
+          </div>
+        ) : null}
       </header>
 
       <nav className="mb-4 flex gap-2 overflow-x-auto pb-2 text-xs text-subtle">

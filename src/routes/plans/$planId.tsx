@@ -52,7 +52,7 @@ function PlanPage() {
             </Button>
           </div>
         </div>
-        <PlanDocument plan={plan.plan} storageKey={`plan-${plan.id}`} />
+        <PlanDocument plan={plan.plan} storageKey={`plan-${plan.id}`} allowDownload />
       </div>
     </PageShell>
   );

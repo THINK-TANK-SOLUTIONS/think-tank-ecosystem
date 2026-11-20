@@ -247,7 +247,7 @@ function FinnApp() {
                 </Button>
               </div>
             </div>
-            <PlanDocument plan={saved.plan} storageKey={`plan-${saved.id}`} />
+            <PlanDocument plan={saved.plan} storageKey={`plan-${saved.id}`} allowDownload />
           </div>
         ) : null}
       </div>
